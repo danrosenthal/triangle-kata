@@ -1,34 +1,56 @@
 class Triangle
+  def initialize(a,b,c)
+    check(a,b,c)
+  end
+  
+  def check(a,b,c)
+    equilateral = Equilateral.new
+    isosceles = Isosceles.new
+    scalene = Scalene.new
+    non = NotATriangle.new
+    
+    [non, equilateral, isosceles, scalene].each do |check|
+      return check.define() if check.is?(a,b,c)
+    end
+  end
+  
+end
 
-attr_accessor :sides, :a, :b, :c
-  
-  def initialize(a, b, c)
-    @sides = [a, b, c].sort
-    @a = sides[0]
-    @b = sides[1]
-    @c = sides[2]
-    raise TriangleError, "That's not a triangle, dude." if invalid?
+class Equilateral
+  def is?(a,b,c)
+    a==b && a==c
   end
-  
-  def equilateral
-    :equilateral if a==b && a==c
-  end
-  
-  def isosceles
-    :isosceles if (a==b && a!=c) || (a==c && a!=b) || (b==c && b!=a)
-  end
-  
-  def scalene
-    :scalene if a!=b && b!=c
-  end
-  
-  def invalid?
-    a <= 0 || a + b <= c
-  end
-
-  class TriangleError < StandardError
+  def define
+    :equilateral
   end
 end
 
+class Isosceles
+  def is?(a,b,c)
+    (a==b && a!=c) || (a==c && a!=b) || (b==c && b!=a)
+  end
+  def define
+    :isosceles
+  end
+end
 
+class Scalene
+  def is?(a,b,c)
+    a!=b && b!=c
+  end
+  def define
+    :scalene
+  end
+end
 
+class NotATriangle
+  def is?(a,b,c)
+    a <= 0 || a + b <= c
+  end
+  def define
+    raise TriangleError, "That's not a triangle, dude."
+  end
+end
+
+class TriangleError < StandardError
+end
